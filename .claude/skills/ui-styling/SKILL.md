@@ -1,11 +1,12 @@
 ---
-name: ckm:ui-styling
-description: Create beautiful, accessible user interfaces with shadcn/ui components (built on Radix UI + Tailwind), Tailwind CSS utility-first styling, and canvas-based visual designs. Use when building user interfaces, implementing design systems, creating responsive layouts, adding accessible components (dialogs, dropdowns, forms, tables), customizing themes and colors, implementing dark mode, generating visual designs and posters, or establishing consistent styling patterns across applications.
+name: styling
+description: "shadcn/ui components, Tailwind CSS, dark mode, and accessible UI patterns. Use /styling to start."
+trigger: "/styling"
 argument-hint: "[component or layout]"
 license: MIT
 metadata:
   author: claudekit
-  version: "1.0.0"
+  version: "2.0.0"
 ---
 
 # UI Styling Skill

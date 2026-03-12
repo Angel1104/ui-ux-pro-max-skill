@@ -23,6 +23,7 @@ from core import search, DATA_DIR
 
 # ============ CONFIGURATION ============
 REASONING_FILE = "ui-reasoning.csv"
+COMPONENTS_FILE = "components.csv"
 
 SEARCH_CONFIG = {
     "product": {"max_results": 1},
@@ -30,6 +31,18 @@ SEARCH_CONFIG = {
     "color": {"max_results": 2},
     "landing": {"max_results": 2},
     "typography": {"max_results": 2}
+}
+
+# Project type → default component set
+PROJECT_TYPE_COMPONENTS = {
+    "landing-page": ["hero", "cta-button", "nav", "card", "testimonial", "footer", "section", "feature-grid"],
+    "saas-app": ["button", "input", "select", "checkbox", "radio", "toggle", "card", "modal", "table", "sidebar", "nav", "badge", "alert", "toast", "dropdown", "tabs"],
+    "dashboard": ["card", "stat-card", "chart-container", "table", "filter", "sidebar", "nav", "badge", "dropdown", "tabs", "breadcrumb"],
+    "e-commerce": ["button", "input", "card", "product-card", "cart-item", "modal", "badge", "breadcrumb", "filter", "rating", "price-tag", "image-gallery"],
+    "portfolio": ["hero", "card", "project-card", "nav", "footer", "image-gallery", "section", "tag"],
+    "mobile-app": ["button", "input", "card", "nav-bar", "tab-bar", "list-item", "modal", "toast", "bottom-sheet", "avatar"],
+    "blog": ["card", "article-card", "nav", "footer", "tag", "author-card", "section", "pagination"],
+    "admin-panel": ["button", "input", "select", "checkbox", "table", "sidebar", "nav", "modal", "badge", "alert", "toast", "dropdown", "tabs", "breadcrumb", "stat-card"],
 }
 
 
@@ -160,14 +173,26 @@ class DesignSystemGenerator:
         """Extract results list from search result dict."""
         return search_result.get("results", [])
 
-    def generate(self, query: str, project_name: str = None) -> dict:
-        """Generate complete design system recommendation."""
+    def generate(self, query: str, project_name: str = None,
+                 project_type: str = None, component_names: list = None) -> dict:
+        """Generate complete design system recommendation.
+
+        Args:
+            query: Search query (e.g., "SaaS dashboard", "e-commerce luxury")
+            project_name: Optional project name for output header
+            project_type: Optional project type for component selection (e.g., "landing-page", "saas-app")
+            component_names: Optional list of specific component names to include
+        """
         # Step 1: First search product to get category
         product_result = search(query, "product", 1)
         product_results = product_result.get("results", [])
         category = "General"
         if product_results:
             category = product_results[0].get("Product Type", "General")
+
+        # Resolve project_type from category if not explicitly provided
+        if not project_type:
+            project_type = category.lower().replace(' ', '-').replace('_', '-')
 
         # Step 2: Get reasoning rules for this category
         reasoning = self._apply_reasoning(category, {})
@@ -197,6 +222,8 @@ class DesignSystemGenerator:
         return {
             "project_name": project_name or query.upper(),
             "category": category,
+            "project_type": project_type,
+            "component_names": component_names,
             "pattern": {
                 "name": best_landing.get("Pattern Name", reasoning.get("pattern", "Hero + Features + CTA")),
                 "sections": best_landing.get("Section Order", "Hero > Features > CTA"),
@@ -234,6 +261,262 @@ class DesignSystemGenerator:
             "decision_rules": reasoning.get("decision_rules", {}),
             "severity": reasoning.get("severity", "MEDIUM")
         }
+
+
+# ============ COMPONENT SPEC GENERATOR ============
+def _load_components_csv() -> list:
+    """Load components catalog from CSV."""
+    filepath = DATA_DIR / COMPONENTS_FILE
+    if not filepath.exists():
+        return []
+    with open(filepath, 'r', encoding='utf-8') as f:
+        return list(csv.DictReader(f))
+
+
+def _darken_hex(hex_color: str, factor: float = 0.85) -> str:
+    """Darken a hex color by a factor (0-1)."""
+    hex_color = hex_color.lstrip('#')
+    if len(hex_color) != 6:
+        return f"#{hex_color}"
+    r = max(0, int(int(hex_color[0:2], 16) * factor))
+    g = max(0, int(int(hex_color[2:4], 16) * factor))
+    b = max(0, int(int(hex_color[4:6], 16) * factor))
+    return f"#{r:02X}{g:02X}{b:02X}"
+
+
+def _hex_to_rgba(hex_color: str, alpha: float) -> str:
+    """Convert hex to rgba string."""
+    hex_color = hex_color.lstrip('#')
+    if len(hex_color) != 6:
+        return f"rgba(0,0,0,{alpha})"
+    r = int(hex_color[0:2], 16)
+    g = int(hex_color[2:4], 16)
+    b = int(hex_color[4:6], 16)
+    return f"rgba({r},{g},{b},{alpha})"
+
+
+def get_components_for_project(project_type: str) -> list:
+    """Get default component names for a project type."""
+    key = project_type.lower().replace(' ', '-').replace('_', '-')
+    return PROJECT_TYPE_COMPONENTS.get(key, PROJECT_TYPE_COMPONENTS.get("saas-app", []))
+
+
+def generate_component_specs(project_type: str, colors: dict, style_name: str,
+                              component_names: list = None) -> list:
+    """
+    Generate complete component specs based on project type and design tokens.
+
+    Args:
+        project_type: e.g., "landing-page", "saas-app", "dashboard"
+        colors: dict with primary, secondary, cta, background, text keys
+        style_name: style name to adjust specs (e.g., "Minimalism", "Glassmorphism")
+        component_names: optional list of specific component names (overrides project defaults)
+
+    Returns:
+        List of component spec dicts with all variants, sizes, and states
+    """
+    all_components = _load_components_csv()
+    if not all_components:
+        return []
+
+    # Determine which components to include
+    if component_names:
+        target_names = [n.lower().strip() for n in component_names]
+    else:
+        target_names = [n.lower() for n in get_components_for_project(project_type)]
+
+    # Filter CSV to matching components
+    matched = []
+    for comp in all_components:
+        comp_name = comp.get("Component", "").lower().strip()
+        if comp_name in target_names:
+            matched.append(comp)
+
+    # Apply style adjustments and color tokens
+    style_lower = style_name.lower() if style_name else ""
+    specs = []
+
+    for comp in matched:
+        spec = _build_component_spec(comp, colors, style_lower)
+        specs.append(spec)
+
+    return specs
+
+
+def _build_component_spec(comp_data: dict, colors: dict, style_lower: str) -> dict:
+    """Build a single component spec with style-aware tokens."""
+    name = comp_data.get("Component", "unknown")
+    category = comp_data.get("Category", "")
+    variants = [v.strip() for v in comp_data.get("Variants", "").split(",") if v.strip()]
+    sizes = [s.strip() for s in comp_data.get("Sizes", "").split(",") if s.strip()]
+    states = [s.strip() for s in comp_data.get("States", "").split(",") if s.strip()]
+
+    # Parse default values
+    default_padding = comp_data.get("Default Padding", "8px 16px")
+    default_radius = comp_data.get("Default Radius", "6px")
+    default_shadow = comp_data.get("Default Shadow", "none")
+    default_transition = comp_data.get("Default Transition", "all 150ms ease")
+
+    # Style adjustments
+    radius = _adjust_radius(default_radius, style_lower)
+    shadow = _adjust_shadow(default_shadow, style_lower)
+    transition = _adjust_transition(default_transition, style_lower)
+
+    # Build variant specs with colors
+    variant_specs = _build_variant_specs(name, variants, colors, category)
+
+    # Build size specs
+    size_specs = _parse_size_specs(default_padding, sizes)
+
+    return {
+        "name": name,
+        "category": category,
+        "variants": variant_specs,
+        "sizes": size_specs,
+        "states": states,
+        "radius": radius,
+        "shadow": shadow,
+        "transition": transition,
+    }
+
+
+def _adjust_radius(default_radius: str, style_lower: str) -> str:
+    """Adjust border-radius based on style."""
+    if "brutalism" in style_lower or "brutalist" in style_lower:
+        return "0px"
+    if "neumorphism" in style_lower or "neomorphism" in style_lower:
+        return "14px"
+    if "glassmorphism" in style_lower:
+        return "12px"
+    if "minimalism" in style_lower or "minimal" in style_lower:
+        return "6px"
+    return default_radius.split("|")[0].split(":")[-1].strip() if "|" in default_radius else default_radius
+
+
+def _adjust_shadow(default_shadow: str, style_lower: str) -> str:
+    """Adjust shadow based on style."""
+    if "brutalism" in style_lower:
+        return "4px 4px 0 #000"
+    if "neumorphism" in style_lower:
+        return "-5px -5px 15px rgba(255,255,255,0.8), 5px 5px 15px rgba(0,0,0,0.1)"
+    if "glassmorphism" in style_lower:
+        return "0 4px 30px rgba(0,0,0,0.1)"
+    if "flat" in style_lower:
+        return "none"
+    return default_shadow
+
+
+def _adjust_transition(default_transition: str, style_lower: str) -> str:
+    """Adjust transition based on style."""
+    if "brutalism" in style_lower:
+        return "none"
+    return default_transition
+
+
+def _build_variant_specs(name: str, variants: list, colors: dict, category: str) -> list:
+    """Build color specs for each variant."""
+    primary = colors.get("primary", "#2563EB")
+    secondary = colors.get("secondary", "#3B82F6")
+    cta = colors.get("cta", "#F97316")
+    bg = colors.get("background", "#F8FAFC")
+    text_color = colors.get("text", "#1E293B")
+
+    # Map common variants to colors
+    variant_colors = {
+        "primary": {"bg": primary, "text": "#FFFFFF", "border": "none", "hover_bg": _darken_hex(primary)},
+        "secondary": {"bg": secondary, "text": "#FFFFFF", "border": "none", "hover_bg": _darken_hex(secondary)},
+        "outline": {"bg": "transparent", "text": primary, "border": f"1px solid #E2E8F0", "hover_bg": bg},
+        "ghost": {"bg": "transparent", "text": text_color, "border": "none", "hover_bg": bg},
+        "destructive": {"bg": "#EF4444", "text": "#FFFFFF", "border": "none", "hover_bg": "#DC2626"},
+        "link": {"bg": "transparent", "text": primary, "border": "none", "hover_bg": "transparent"},
+        "default": {"bg": bg, "text": text_color, "border": f"1px solid #E2E8F0", "hover_bg": "#F1F5F9"},
+        "elevated": {"bg": "#FFFFFF", "text": text_color, "border": "none", "hover_bg": "#FFFFFF"},
+        "interactive": {"bg": "#FFFFFF", "text": text_color, "border": f"1px solid #E2E8F0", "hover_bg": bg},
+        "success": {"bg": "#22C55E", "text": "#FFFFFF", "border": "none", "hover_bg": "#16A34A"},
+        "warning": {"bg": "#F59E0B", "text": "#FFFFFF", "border": "none", "hover_bg": "#D97706"},
+        "error": {"bg": "#EF4444", "text": "#FFFFFF", "border": "none", "hover_bg": "#DC2626"},
+        "info": {"bg": "#3B82F6", "text": "#FFFFFF", "border": "none", "hover_bg": "#2563EB"},
+    }
+
+    specs = []
+    for variant in variants:
+        v_lower = variant.lower()
+        colors_for_v = variant_colors.get(v_lower, variant_colors.get("default", {}))
+        specs.append({
+            "variant": variant,
+            **colors_for_v
+        })
+
+    return specs
+
+
+def _parse_size_specs(padding_str: str, sizes: list) -> list:
+    """Parse size specifications from the CSV padding format."""
+    # Format: "sm:6px 12px|default:8px 16px|lg:12px 24px"
+    size_map = {}
+    for part in padding_str.split("|"):
+        part = part.strip()
+        if ":" in part:
+            size_name, padding = part.split(":", 1)
+            size_map[size_name.strip()] = padding.strip()
+
+    specs = []
+    for size in sizes:
+        s_lower = size.lower().strip()
+        padding = size_map.get(s_lower, size_map.get("default", "8px 16px"))
+        specs.append({"size": size, "padding": padding})
+
+    return specs
+
+
+def format_component_specs_md(specs: list) -> str:
+    """Format component specs as markdown for MASTER.md."""
+    if not specs:
+        return ""
+
+    lines = []
+
+    for spec in specs:
+        name = spec.get("name", "Unknown")
+        display_name = name.replace("-", " ").title()
+        category = spec.get("category", "")
+        variants = spec.get("variants", [])
+        sizes = spec.get("sizes", [])
+        states = spec.get("states", [])
+        radius = spec.get("radius", "6px")
+        shadow = spec.get("shadow", "none")
+        transition = spec.get("transition", "all 150ms ease")
+
+        lines.append(f"### {display_name}")
+        lines.append(f"*Category: {category}*")
+        lines.append("")
+
+        # Variants table
+        if variants:
+            lines.append("**Variants:**")
+            lines.append("")
+            lines.append("| Variant | Background | Text | Border | Hover BG |")
+            lines.append("|---------|-----------|------|--------|----------|")
+            for v in variants:
+                lines.append(f"| {v['variant']} | `{v.get('bg', '')}` | `{v.get('text', '')}` | `{v.get('border', 'none')}` | `{v.get('hover_bg', '')}` |")
+            lines.append("")
+
+        # Sizes
+        if sizes:
+            size_strs = [f"{s['size']}({s['padding']})" for s in sizes]
+            lines.append(f"**Sizes:** {' / '.join(size_strs)}")
+            lines.append("")
+
+        # States
+        if states:
+            lines.append(f"**States:** {', '.join(states)}")
+            lines.append("")
+
+        # Specs
+        lines.append(f"**Specs:** radius: `{radius}` | shadow: `{shadow}` | transition: `{transition}`")
+        lines.append("")
+
+    return "\n".join(lines)
 
 
 # ============ OUTPUT FORMATTERS ============
@@ -459,8 +742,9 @@ def format_markdown(design_system: dict) -> str:
 
 
 # ============ MAIN ENTRY POINT ============
-def generate_design_system(query: str, project_name: str = None, output_format: str = "ascii", 
-                           persist: bool = False, page: str = None, output_dir: str = None) -> str:
+def generate_design_system(query: str, project_name: str = None, output_format: str = "ascii",
+                           persist: bool = False, page: str = None, output_dir: str = None,
+                           project_type: str = None, component_names: list = None) -> str:
     """
     Main entry point for design system generation.
 
@@ -471,13 +755,15 @@ def generate_design_system(query: str, project_name: str = None, output_format: 
         persist: If True, save design system to design-system/ folder
         page: Optional page name for page-specific override file
         output_dir: Optional output directory (defaults to current working directory)
+        project_type: Optional project type for component selection (e.g., "landing-page", "saas-app")
+        component_names: Optional list of specific component names to include
 
     Returns:
         Formatted design system string
     """
     generator = DesignSystemGenerator()
-    design_system = generator.generate(query, project_name)
-    
+    design_system = generator.generate(query, project_name, project_type, component_names)
+
     # Persist to files if requested
     if persist:
         persist_design_system(design_system, page, output_dir, query)
@@ -630,105 +916,31 @@ def format_master_md(design_system: dict) -> str:
     lines.append("| `--shadow-xl` | `0 20px 25px rgba(0,0,0,0.15)` | Hero images, featured cards |")
     lines.append("")
     
-    # Component Specs section
+    # Component Specs section (dynamic from project type)
     lines.append("---")
     lines.append("")
     lines.append("## Component Specs")
     lines.append("")
-    
-    # Buttons
-    lines.append("### Buttons")
-    lines.append("")
-    lines.append("```css")
-    lines.append("/* Primary Button */")
-    lines.append(".btn-primary {")
-    lines.append(f"  background: {colors.get('cta', '#F97316')};")
-    lines.append("  color: white;")
-    lines.append("  padding: 12px 24px;")
-    lines.append("  border-radius: 8px;")
-    lines.append("  font-weight: 600;")
-    lines.append("  transition: all 200ms ease;")
-    lines.append("  cursor: pointer;")
-    lines.append("}")
-    lines.append("")
-    lines.append(".btn-primary:hover {")
-    lines.append("  opacity: 0.9;")
-    lines.append("  transform: translateY(-1px);")
-    lines.append("}")
-    lines.append("")
-    lines.append("/* Secondary Button */")
-    lines.append(".btn-secondary {")
-    lines.append(f"  background: transparent;")
-    lines.append(f"  color: {colors.get('primary', '#2563EB')};")
-    lines.append(f"  border: 2px solid {colors.get('primary', '#2563EB')};")
-    lines.append("  padding: 12px 24px;")
-    lines.append("  border-radius: 8px;")
-    lines.append("  font-weight: 600;")
-    lines.append("  transition: all 200ms ease;")
-    lines.append("  cursor: pointer;")
-    lines.append("}")
-    lines.append("```")
-    lines.append("")
-    
-    # Cards
-    lines.append("### Cards")
-    lines.append("")
-    lines.append("```css")
-    lines.append(".card {")
-    lines.append(f"  background: {colors.get('background', '#FFFFFF')};")
-    lines.append("  border-radius: 12px;")
-    lines.append("  padding: 24px;")
-    lines.append("  box-shadow: var(--shadow-md);")
-    lines.append("  transition: all 200ms ease;")
-    lines.append("  cursor: pointer;")
-    lines.append("}")
-    lines.append("")
-    lines.append(".card:hover {")
-    lines.append("  box-shadow: var(--shadow-lg);")
-    lines.append("  transform: translateY(-2px);")
-    lines.append("}")
-    lines.append("```")
-    lines.append("")
-    
-    # Inputs
-    lines.append("### Inputs")
-    lines.append("")
-    lines.append("```css")
-    lines.append(".input {")
-    lines.append("  padding: 12px 16px;")
-    lines.append("  border: 1px solid #E2E8F0;")
-    lines.append("  border-radius: 8px;")
-    lines.append("  font-size: 16px;")
-    lines.append("  transition: border-color 200ms ease;")
-    lines.append("}")
-    lines.append("")
-    lines.append(".input:focus {")
-    lines.append(f"  border-color: {colors.get('primary', '#2563EB')};")
-    lines.append("  outline: none;")
-    lines.append(f"  box-shadow: 0 0 0 3px {colors.get('primary', '#2563EB')}20;")
-    lines.append("}")
-    lines.append("```")
-    lines.append("")
-    
-    # Modals
-    lines.append("### Modals")
-    lines.append("")
-    lines.append("```css")
-    lines.append(".modal-overlay {")
-    lines.append("  background: rgba(0, 0, 0, 0.5);")
-    lines.append("  backdrop-filter: blur(4px);")
-    lines.append("}")
-    lines.append("")
-    lines.append(".modal {")
-    lines.append("  background: white;")
-    lines.append("  border-radius: 16px;")
-    lines.append("  padding: 32px;")
-    lines.append("  box-shadow: var(--shadow-xl);")
-    lines.append("  max-width: 500px;")
-    lines.append("  width: 90%;")
-    lines.append("}")
-    lines.append("```")
-    lines.append("")
+
+    project_type = design_system.get("project_type", "")
+    component_names = design_system.get("component_names", None)
+
+    if project_type:
+        comp_specs = generate_component_specs(project_type, colors, style.get("name", "Minimalism"), component_names)
+        comp_md = format_component_specs_md(comp_specs)
+        if comp_md:
+            lines.append(comp_md)
+        else:
+            lines.append("*No components generated. Run `/design-system` to select components.*")
+            lines.append("")
+    else:
+        # Fallback: basic component specs for backwards compatibility
+        comp_specs = generate_component_specs("saas-app", colors, style.get("name", "Minimalism"),
+                                               ["button", "card", "input", "modal"])
+        comp_md = format_component_specs_md(comp_specs)
+        if comp_md:
+            lines.append(comp_md)
+        lines.append("")
     
     # Style section
     lines.append("---")

@@ -1,41 +1,47 @@
 ---
-name: ckm:design
-description: "Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity program (50 deliverables, CIP mockups), HTML presentations (Chart.js), banner design (22 styles, social/ads/web/print), icon design (15 styles, SVG, Gemini 3.1 Pro), social photos (HTML→screenshot, multi-platform). Actions: design logo, create CIP, generate mockups, build slides, design banner, generate icon, create social photos, social media images, brand identity, design system. Platforms: Facebook, Twitter, LinkedIn, YouTube, Instagram, Pinterest, TikTok, Threads, Google Ads."
-argument-hint: "[design-type] [context]"
+name: design
+description: "Design asset router for logos, CIP, icons, and social photos. Use /design to start."
+trigger: "/design"
+argument-hint: "[logo|cip|icon|social]"
 license: MIT
 metadata:
   author: claudekit
-  version: "2.1.0"
+  version: "3.0.0"
 ---
 
 # Design
 
-Unified design skill: brand, tokens, UI, logo, CIP, slides, banners, social photos, icons.
+Design asset router for logos, corporate identity, icons, and social photos.
 
-## When to Use
+<args>$ARGUMENTS</args>
 
-- Brand identity, voice, assets
-- Design system tokens and specs
-- UI styling with shadcn/ui + Tailwind
-- Logo design and AI generation
-- Corporate identity program (CIP) deliverables
-- Presentations and pitch decks
-- Banner design for social media, ads, web, print
-- Social photos for Instagram, Facebook, LinkedIn, Twitter, Pinterest, TikTok
+## Routing
 
-## Sub-skill Routing
+**IMPORTANT:** When this skill is invoked, use `AskUserQuestion` to ask the user what they want to create BEFORE doing anything else.
 
-| Task | Sub-skill | Details |
-|------|-----------|---------|
-| Brand identity, voice, assets | `brand` | External skill |
-| Tokens, specs, CSS vars | `design-system` | External skill |
-| shadcn/ui, Tailwind, code | `ui-styling` | External skill |
-| Logo creation, AI generation | Logo (built-in) | `references/logo-design.md` |
-| CIP mockups, deliverables | CIP (built-in) | `references/cip-design.md` |
-| Presentations, pitch decks | Slides (built-in) | `references/slides.md` |
-| Banners, covers, headers | Banner (built-in) | `references/banner-sizes-and-styles.md` |
-| Social media images/photos | Social Photos (built-in) | `references/social-photos-design.md` |
-| SVG icons, icon sets | Icon (built-in) | `references/icon-design.md` |
+### If no arguments provided, ask:
+
+Ask the user: **"What do you want to create?"** with these options:
+1. **Logo** — Logo design with AI generation (55+ styles)
+2. **CIP** — Corporate Identity Program (50+ deliverables, mockups)
+3. **Icon** — SVG icon design (15+ styles)
+4. **Social Photos** — Social media images for Instagram, Facebook, LinkedIn, Twitter, Pinterest, TikTok
+
+### If arguments provided, route directly:
+
+| Argument | Action | Reference |
+|----------|--------|-----------|
+| `logo` | Logo design workflow | `references/logo-design.md` |
+| `cip` | Corporate identity program | `references/cip-design.md` |
+| `icon` | SVG icon design | `references/icon-design.md` |
+| `social` | Social media photos | `references/social-photos-design.md` |
+
+### Other design tasks — use these commands instead:
+- Brand identity/voice → `/brand`
+- Design tokens/system → `/design-system`
+- UI components/styling → `/styling`
+- Banners/covers → `/banner`
+- Presentations → `/slides`
 
 ## Logo Design (Built-in)
 
