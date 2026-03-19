@@ -1,11 +1,11 @@
 # [UI UX Pro Max](https://uupm.cc)
- 
+
 <p align="center">
   <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases"><img src="https://img.shields.io/github/v/release/nextlevelbuilder/ui-ux-pro-max-skill?style=for-the-badge&color=blue" alt="GitHub Release"></a>
   <img src="https://img.shields.io/badge/reasoning_rules-161-green?style=for-the-badge" alt="161 Reasoning Rules">
-  <img src="https://img.shields.io/badge/UI_styles-67-purple?style=for-the-badge" alt="67 UI Styles">
+  <img src="https://img.shields.io/badge/UI_styles-84-purple?style=for-the-badge" alt="84 UI Styles">
+  <img src="https://img.shields.io/badge/stacks-13-orange?style=for-the-badge" alt="13 Stacks">
   <img src="https://img.shields.io/badge/python-3.x-yellow?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.x">
-  <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/LICENSE"><img src="https://img.shields.io/github/license/nextlevelbuilder/ui-ux-pro-max-skill?style=for-the-badge&color=green" alt="License"></a>
 </p>
 
 <p align="center">
@@ -33,64 +33,40 @@ An AI skill that provides design intelligence for building professional UI/UX ac
   <a href="https://nextlevelbuilder.io">NextLevelBuilder.io</a> | <a href="https://goclaw.sh">GoClaw.sh</a> | <a href="https://claudekit.cc">ClaudeKit.cc</a> | <a href="https://tose.sh">TOSE.sh</a>
 </p>
 
-## What's New in v2.0
+## The Pipeline
 
-### Intelligent Design System Generation
-
-The flagship feature of v2.0 is the **Design System Generator** - an AI-powered reasoning engine that analyzes your project requirements and generates a complete, tailored design system in seconds.
+Every project follows this flow. Each command asks questions and guides you to the next step.
 
 ```
-+----------------------------------------------------------------------------------------+
-|  TARGET: Serenity Spa - RECOMMENDED DESIGN SYSTEM                                      |
-+----------------------------------------------------------------------------------------+
-|                                                                                        |
-|  PATTERN: Hero-Centric + Social Proof                                                  |
-|     Conversion: Emotion-driven with trust elements                                     |
-|     CTA: Above fold, repeated after testimonials                                       |
-|     Sections:                                                                          |
-|       1. Hero                                                                          |
-|       2. Services                                                                      |
-|       3. Testimonials                                                                  |
-|       4. Booking                                                                       |
-|       5. Contact                                                                       |
-|                                                                                        |
-|  STYLE: Soft UI Evolution                                                              |
-|     Keywords: Soft shadows, subtle depth, calming, premium feel, organic shapes        |
-|     Best For: Wellness, beauty, lifestyle brands, premium services                     |
-|     Performance: Excellent | Accessibility: WCAG AA                                    |
-|                                                                                        |
-|  COLORS:                                                                               |
-|     Primary:    #E8B4B8 (Soft Pink)                                                    |
-|     Secondary:  #A8D5BA (Sage Green)                                                   |
-|     CTA:        #D4AF37 (Gold)                                                         |
-|     Background: #FFF5F5 (Warm White)                                                   |
-|     Text:       #2D3436 (Charcoal)                                                     |
-|     Notes: Calming palette with gold accents for luxury feel                           |
-|                                                                                        |
-|  TYPOGRAPHY: Cormorant Garamond / Montserrat                                           |
-|     Mood: Elegant, calming, sophisticated                                              |
-|     Best For: Luxury brands, wellness, beauty, editorial                               |
-|     Google Fonts: https://fonts.google.com/share?selection.family=...                  |
-|                                                                                        |
-|  KEY EFFECTS:                                                                          |
-|     Soft shadows + Smooth transitions (200-300ms) + Gentle hover states                |
-|                                                                                        |
-|  AVOID (Anti-patterns):                                                                |
-|     Bright neon colors + Harsh animations + Dark mode + AI purple/pink gradients       |
-|                                                                                        |
-|  PRE-DELIVERY CHECKLIST:                                                               |
-|     [ ] No emojis as icons (use SVG: Heroicons/Lucide)                                 |
-|     [ ] cursor-pointer on all clickable elements                                       |
-|     [ ] Hover states with smooth transitions (150-300ms)                               |
-|     [ ] Light mode: text contrast 4.5:1 minimum                                        |
-|     [ ] Focus states visible for keyboard nav                                          |
-|     [ ] prefers-reduced-motion respected                                               |
-|     [ ] Responsive: 375px, 768px, 1024px, 1440px                                       |
-|                                                                                        |
-+----------------------------------------------------------------------------------------+
+/create  →  /design-system  →  /export  →  /build  →  /review
+  (1)           (2)               (3)         (4)         (5)
+context      colors, fonts     code/figma   pages &     audit
+& goals      components        /pencil     components
+              tokens
 ```
 
-### How Design System Generation Works
+| Command | What it does | Run |
+|---------|-------------|-----|
+| `/create` | Gathers project brief — type, audience, goals | Once |
+| `/design-system` | Generates complete design system — style, colors, fonts, tokens | Once |
+| `/export` | Exports to Code (any stack), Figma, or Pencil | Once per target |
+| `/build` | Builds pages, sections, and components | Repeat |
+| `/review` | Audits for accessibility, performance, UX | Repeat |
+
+### Design Tools
+
+| Command | What it does |
+|---------|-------------|
+| `/figma` | Push designs to Figma Desktop via figma-bridge MCP |
+| `/pencil` | Create visual mockups in .pen files |
+| `/design` | Logo, CIP, icons, social photos |
+| `/banner` | Social media, ads, website heroes, print banners |
+| `/slides` | HTML presentations with Chart.js |
+| `/brand` | Brand voice, visual identity, messaging |
+| `/styling` | shadcn/ui components, Tailwind, dark mode |
+| `/help` | Full usage guide |
+
+## How Design System Generation Works
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -102,19 +78,19 @@ The flagship feature of v2.0 is the **Design System Generator** - an AI-powered 
 ┌─────────────────────────────────────────────────────────────────┐
 │  2. MULTI-DOMAIN SEARCH (5 parallel searches)                   │
 │     • Product type matching (161 categories)                    │
-│     • Style recommendations (67 styles)                         │
+│     • Style recommendations (84 styles)                         │
 │     • Color palette selection (161 palettes)                    │
-│     • Landing page patterns (24 patterns)                       │
-│     • Typography pairing (57 font combinations)                 │
+│     • Landing page patterns (34 patterns)                       │
+│     • Typography pairing (73 font combinations)                 │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │  3. REASONING ENGINE                                            │
-│     • Match product → UI category rules                         │
+│     • Match product → UI category rules (161 rules)             │
+│     • Execute Decision_Rules against query                       │
 │     • Apply style priorities (BM25 ranking)                     │
 │     • Filter anti-patterns for industry                         │
-│     • Process decision rules (JSON conditions)                  │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -125,40 +101,44 @@ The flagship feature of v2.0 is the **Design System Generator** - an AI-powered 
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 161 Industry-Specific Reasoning Rules
+Example output:
 
-The reasoning engine includes specialized rules for:
-
-| Category | Examples |
-|----------|----------|
-| **Tech & SaaS** | SaaS, Micro SaaS, B2B Service, Developer Tool / IDE, AI/Chatbot Platform, Cybersecurity Platform |
-| **Finance** | Fintech/Crypto, Banking, Insurance, Personal Finance Tracker, Invoice & Billing Tool |
-| **Healthcare** | Medical Clinic, Pharmacy, Dental, Veterinary, Mental Health, Medication Reminder |
-| **E-commerce** | General, Luxury, Marketplace (P2P), Subscription Box, Food Delivery |
-| **Services** | Beauty/Spa, Restaurant, Hotel, Legal, Home Services, Booking & Appointment |
-| **Creative** | Portfolio, Agency, Photography, Gaming, Music Streaming, Photo/Video Editor |
-| **Lifestyle** | Habit Tracker, Recipe & Cooking, Meditation, Weather, Diary, Mood Tracker |
-| **Emerging Tech** | Web3/NFT, Spatial Computing, Quantum Computing, Autonomous Drone Fleet |
-
-Each rule includes:
-- **Recommended Pattern** - Landing page structure
-- **Style Priority** - Best matching UI styles
-- **Color Mood** - Industry-appropriate palettes
-- **Typography Mood** - Font personality matching
-- **Key Effects** - Animations and interactions
-- **Anti-Patterns** - What NOT to do (e.g., "AI purple/pink gradients" for banking)
+```
++-----------------------------------------------------------------------------------------+
+|  TARGET: Serenity Spa - RECOMMENDED DESIGN SYSTEM                                       |
++-----------------------------------------------------------------------------------------+
+|  PATTERN: Hero-Centric + Social Proof                                                   |
+|  STYLE:   Soft UI Evolution                                                             |
+|  COLORS:  Primary #E8B4B8 · Secondary #A8D5BA · CTA #D4AF37 · BG #FFF5F5               |
+|  FONTS:   Cormorant Garamond / Montserrat                                               |
+|  AVOID:   Bright neon · Harsh animations · AI purple/pink gradients                    |
++-----------------------------------------------------------------------------------------+
+```
 
 ## Features
 
-- **67 UI Styles** - Glassmorphism, Claymorphism, Minimalism, Brutalism, Neumorphism, Bento Grid, Dark Mode, AI-Native UI, and more
-- **161 Color Palettes** - Industry-specific palettes aligned 1:1 with the 161 product types
-- **57 Font Pairings** - Curated typography combinations with Google Fonts imports
-- **25 Chart Types** - Recommendations for dashboards and analytics
-- **13 Tech Stacks** - React, Next.js, Astro, Vue, Nuxt.js, Nuxt UI, Svelte, SwiftUI, React Native, Flutter, HTML+Tailwind, shadcn/ui, Jetpack Compose
-- **99 UX Guidelines** - Best practices, anti-patterns, and accessibility rules
-- **161 Reasoning Rules** - Industry-specific design system generation (NEW in v2.0)
+- **84 UI Styles** — Glassmorphism, Claymorphism, Minimalism, Brutalism, Neumorphism, Bento Grid, Liquid Glass, and more
+- **161 Color Palettes** — Industry-specific palettes aligned 1:1 with 161 product types
+- **73 Font Pairings** — Curated typography with Google Fonts imports
+- **34 Landing Patterns** — Conversion-optimized page structures
+- **25 Chart Types** — Recommendations for dashboards and analytics
+- **13 Tech Stacks** — Framework-specific guidelines (see below)
+- **99 UX Guidelines** — Best practices, anti-patterns, and accessibility rules
+- **161 Reasoning Rules** — Industry-specific Decision_Rules executed programmatically
 
-### Available Styles (67)
+### Supported Stacks (13)
+
+| Category | Stacks |
+|----------|--------|
+| **Web** | HTML + Tailwind, shadcn/ui |
+| **React Ecosystem** | React, Next.js |
+| **Vue Ecosystem** | Vue, Nuxt.js, Nuxt UI |
+| **Other Web** | Svelte, Astro |
+| **iOS** | SwiftUI |
+| **Android** | Jetpack Compose |
+| **Cross-Platform** | React Native, Flutter |
+
+### Available Styles (84)
 
 <details>
 <summary><b>General Styles (49)</b></summary>
@@ -255,8 +235,6 @@ Each rule includes:
 
 ### Using Claude Marketplace (Claude Code)
 
-Install directly in Claude Code with two commands:
-
 ```
 /plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill
 /plugin install ui-ux-pro-max@ui-ux-pro-max-skill
@@ -265,25 +243,18 @@ Install directly in Claude Code with two commands:
 ### Using CLI (Recommended)
 
 ```bash
-# Install CLI globally
 npm install -g uipro-cli
-
-# Go to your project
 cd /path/to/your/project
-
-# Install for your AI assistant
 uipro init --ai claude      # Claude Code
 uipro init --ai cursor      # Cursor
 uipro init --ai windsurf    # Windsurf
-uipro init --ai antigravity # Antigravity
 uipro init --ai copilot     # GitHub Copilot
 uipro init --ai kiro        # Kiro
 uipro init --ai codex       # Codex CLI
-uipro init --ai qoder       # Qoder
-uipro init --ai roocode     # Roo Code
 uipro init --ai gemini      # Gemini CLI
 uipro init --ai trae        # Trae
 uipro init --ai opencode    # OpenCode
+uipro init --ai roocode     # Roo Code
 uipro init --ai continue    # Continue
 uipro init --ai codebuddy   # CodeBuddy
 uipro init --ai droid       # Droid (Factory)
@@ -295,204 +266,134 @@ uipro init --ai all         # All assistants
 ```bash
 uipro versions              # List available versions
 uipro update                # Update to latest version
-uipro init --offline        # Skip GitHub download, use bundled assets
+uipro init --offline        # Use bundled assets, skip download
 ```
 
 ## Prerequisites
 
-Python 3.x is required for the search script.
+Python 3.x — no external dependencies.
 
 ```bash
-# Check if Python is installed
-python3 --version
-
-# macOS
-brew install python3
-
-# Ubuntu/Debian
-sudo apt update && sudo apt install python3
-
-# Windows
-winget install Python.Python.3.12
+python3 --version       # Check
+brew install python3    # macOS
+sudo apt install python3  # Ubuntu/Debian
+winget install Python.Python.3.12  # Windows
 ```
 
 ## Usage
 
 ### Skill Mode (Auto-activate)
 
-**Supported:** Claude Code, Cursor, Windsurf, Antigravity, Codex CLI, Continue, Gemini CLI, OpenCode, Qoder, CodeBuddy, Droid (Factory)
-
-The skill activates automatically when you request UI/UX work. Just chat naturally:
+The skill activates automatically for UI/UX requests. Just chat naturally:
 
 ```
 Build a landing page for my SaaS product
+Create a dashboard for healthcare analytics
+Design a mobile app for food delivery
 ```
 
-> **Trae**: Switch to **SOLO** mode first. The skill will activate for UI/UX requests.
+> **Trae**: Switch to **SOLO** mode first.
 
 ### Workflow Mode (Slash Command)
 
-**Supported:** Kiro, GitHub Copilot, Roo Code
-
-Use the slash command to invoke the skill:
+For platforms that use slash commands (Kiro, Copilot, Roo Code):
 
 ```
 /ui-ux-pro-max Build a landing page for my SaaS product
 ```
 
-### Example Prompts
-
-```
-Build a landing page for my SaaS product
-
-Create a dashboard for healthcare analytics
-
-Design a portfolio website with dark mode
-
-Make a mobile app UI for e-commerce
-
-Build a fintech banking app with dark theme
-```
-
-### How It Works
-
-1. **You ask** - Request any UI/UX task (build, design, create, implement, review, fix, improve)
-2. **Design System Generated** - The AI automatically generates a complete design system using the reasoning engine
-3. **Smart recommendations** - Based on your product type and requirements, it finds the best matching styles, colors, and typography
-4. **Code generation** - Implements the UI with proper colors, fonts, spacing, and best practices
-5. **Pre-delivery checks** - Validates against common UI/UX anti-patterns
-
-### Supported Stacks
-
-The skill provides stack-specific guidelines for:
-
-| Category | Stacks |
-|----------|--------|
-| **Web (HTML)** | HTML + Tailwind (default) |
-| **React Ecosystem** | React, Next.js, shadcn/ui |
-| **Vue Ecosystem** | Vue, Nuxt.js, Nuxt UI |
-| **Other Web** | Svelte, Astro |
-| **iOS** | SwiftUI |
-| **Android** | Jetpack Compose |
-| **Cross-Platform** | React Native, Flutter |
-
-Just mention your preferred stack in the prompt, or let it default to HTML + Tailwind.
-
-## Design System Command (Advanced)
-
-For direct access to the design system generator:
-
-> Note: If you installed via Continue, replace `.claude/skills/` with `.continue/skills/` in the commands below. For Droid (Factory), use `.factory/skills/`.
+### Direct Search Commands
 
 ```bash
-# Generate design system with ASCII output
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "beauty spa wellness" --design-system -p "Serenity Spa"
+# Generate complete design system
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py "beauty spa" --design-system -p "Serenity"
 
-# Generate with Markdown output
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "fintech banking" --design-system -f markdown
-
-# Domain-specific search
+# Domain search
 python3 .claude/skills/ui-ux-pro-max/scripts/search.py "glassmorphism" --domain style
 python3 .claude/skills/ui-ux-pro-max/scripts/search.py "elegant serif" --domain typography
 python3 .claude/skills/ui-ux-pro-max/scripts/search.py "dashboard" --domain chart
 
 # Stack-specific guidelines
 python3 .claude/skills/ui-ux-pro-max/scripts/search.py "form validation" --stack react
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "responsive layout" --stack html-tailwind
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py "server components" --stack nextjs
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py "composable" --stack vue
 ```
 
-### Persist Design System (Master + Overrides Pattern)
-
-Save your design system to files for **hierarchical retrieval across sessions**:
+### Persist Design System Across Sessions
 
 ```bash
-# Generate and persist to design-system/MASTER.md
+# Save global design system
 python3 .claude/skills/ui-ux-pro-max/scripts/search.py "SaaS dashboard" --design-system --persist -p "MyApp"
 
-# Also create a page-specific override file
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "SaaS dashboard" --design-system --persist -p "MyApp" --page "dashboard"
+# Add page-specific overrides
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py "checkout flow" --design-system --persist -p "MyApp" --page "checkout"
 ```
 
-This creates a `design-system/` folder structure:
+Creates:
 
 ```
 design-system/
-├── MASTER.md           # Global Source of Truth (colors, typography, spacing, components)
+├── BRIEF.md            # Project context (written by /create)
+├── MASTER.md           # Global design system (colors, fonts, tokens)
 └── pages/
-    └── dashboard.md    # Page-specific overrides (only deviations from Master)
+    └── checkout.md     # Page overrides (only deviations from MASTER)
 ```
 
-**How hierarchical retrieval works:**
-1. When building a specific page (e.g., "Checkout"), first check `design-system/pages/checkout.md`
-2. If the page file exists, its rules **override** the Master file
-3. If not, use `design-system/MASTER.md` exclusively
-
-**Context-aware retrieval prompt:**
-```
-I am building the [Page Name] page. Please read design-system/MASTER.md.
-Also check if design-system/pages/[page-name].md exists.
-If the page file exists, prioritize its rules.
-If not, use the Master rules exclusively.
-Now, generate the code...
-```
+When building a page, Claude reads `MASTER.md` first, then checks for a page override.
 
 ## Architecture & Contributing
 
-### For Users
+```
+src/ui-ux-pro-max/           # Source of truth
+├── data/                    # CSV databases (161 products, 84 styles, 73 fonts...)
+│   └── stacks/              # 13 stack-specific CSVs
+├── scripts/                 # BM25 search engine + design system generator
+└── templates/               # Platform configs (claude, cursor, windsurf...)
 
-The codebase has been restructured to use a **template-based generation system**. All platform-specific files (`.cursor/`, `.windsurf/`, `.kiro/`, `.factory/`, etc.) are now generated dynamically by the CLI.
+cli/                         # npm package (uipro-cli)
+├── assets/                  # Copy of src/ — synced before publish
+└── src/                     # CLI source (TypeScript)
 
-**Always use the CLI to install:**
-
-```bash
-npm install -g uipro-cli
-uipro init --ai <platform>
+.claude/skills/              # Claude Code skills
+├── ui-ux-pro-max/           # Core engine (symlinks to src/)
+├── create/                  # /create — project intake
+├── design-system/           # /design-system — token generation
+├── build/                   # /build — page generation
+├── export/                  # /export — code/figma/pencil output
+├── review/                  # /review — UX audit
+├── figma/                   # /figma — Figma Desktop bridge
+├── pencil/                  # /pencil — .pen file design
+└── help/                    # /help — usage guide
 ```
 
-This ensures you get the latest templates and correct file structure for your AI assistant.
-
-### For Contributors
-
-If you want to contribute to this project:
+### Contributing
 
 ```bash
-# 1. Clone the repository
+# 1. Clone
 git clone https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git
 cd ui-ux-pro-max-skill
 
-# 2. Understand the structure
-src/ui-ux-pro-max/           # Source of truth (data, scripts, templates)
-cli/                         # CLI installer (generates files from templates)
-.claude/                     # Local dev/test for Claude Code skill
-.factory/                    # Local dev/test for Droid (Factory) skill
+# 2. Make changes in src/ui-ux-pro-max/
 
-# 3. Make changes in src/ui-ux-pro-max/
-# - data/*.csv              → Database files
-# - scripts/*.py            → Search engine & design system
-# - templates/              → Platform-specific templates
+# 3. Run data integrity tests
+python3 src/ui-ux-pro-max/scripts/test_integrity.py
 
-# 4. Sync to CLI and test locally
-cp -r src/ui-ux-pro-max/data/* cli/assets/data/
-cp -r src/ui-ux-pro-max/scripts/* cli/assets/scripts/
-cp -r src/ui-ux-pro-max/templates/* cli/assets/templates/
+# 4. Sync to CLI assets
+cd cli && npm run sync
 
 # 5. Build and test CLI
-cd cli && bun run build
-node dist/index.js init --ai claude --offline  # Test in a temp folder
+bun run build
+node dist/index.js init --ai claude --offline
 
-# 6. Create PR (never push directly to main)
+# 6. Create PR (never push to main)
 git checkout -b feat/your-feature
 git commit -m "feat: description"
 git push -u origin feat/your-feature
 gh pr create
 ```
 
-See [CLAUDE.md](CLAUDE.md) for detailed development guidelines.
+> Note: For Continue use `.continue/skills/`, for Droid use `.factory/skills/`.
 
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=nextlevelbuilder/ui-ux-pro-max-skill&type=Date)](https://star-history.com/#nextlevelbuilder/ui-ux-pro-max-skill&Date)
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).

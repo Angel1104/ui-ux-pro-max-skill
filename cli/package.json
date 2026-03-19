@@ -13,7 +13,8 @@
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target node",
     "dev": "bun run src/index.ts",
-    "prepublishOnly": "bun run build"
+    "sync": "cp -r ../src/ui-ux-pro-max/data/* assets/data/ && cp -r ../src/ui-ux-pro-max/scripts/* assets/scripts/ && cp -r ../src/ui-ux-pro-max/templates/* assets/templates/ && echo 'Sync complete'",
+    "prepublishOnly": "bun run sync && bun run build"
   },
   "keywords": [
     "ui",

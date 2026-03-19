@@ -98,8 +98,9 @@ class DesignSystemGenerator:
 
         return {}
 
-    def _apply_reasoning(self, category: str, search_results: dict) -> dict:
-        """Apply reasoning rules to search results."""
+    def _apply_reasoning(self, category: str, search_results: dict, query: str = "") -> dict:
+        """Apply reasoning rules to search results. Executes Decision_Rules against query."""
+        self._query_lower = query.lower()
         rule = self._find_reasoning_rule(category)
 
         if not rule:
@@ -114,21 +115,46 @@ class DesignSystemGenerator:
                 "severity": "MEDIUM"
             }
 
-        # Parse decision rules JSON
+        # Parse and execute decision rules JSON
         decision_rules = {}
         try:
             decision_rules = json.loads(rule.get("Decision_Rules", "{}"))
         except json.JSONDecodeError:
             pass
 
+        # Execute decision rules against query to override style/pattern
+        style_priority = [s.strip() for s in rule.get("Style_Priority", "").split("+")]
+        pattern = rule.get("Recommended_Pattern", "")
+        query_lower = self._query_lower
+
+        for condition, action in decision_rules.items():
+            # condition: "if_luxury", "if_data_heavy", "if_pre_launch", etc.
+            # Extract the keyword after "if_"
+            keyword = condition.replace("if_", "").replace("_", " ")
+            if keyword in query_lower:
+                # action: "switch-to-liquid-glass", "prioritize-minimalism", etc.
+                if action.startswith("switch-to-"):
+                    new_style = action.replace("switch-to-", "").replace("-", " ").title()
+                    style_priority = [new_style] + [s for s in style_priority if s.lower() != new_style.lower()]
+                elif action.startswith("prioritize-"):
+                    priority_style = action.replace("prioritize-", "").replace("-", " ").title()
+                    style_priority = [priority_style] + [s for s in style_priority if s.lower() != priority_style.lower()]
+                elif action.startswith("add-"):
+                    extra_style = action.replace("add-", "").replace("-", " ").title()
+                    if extra_style not in style_priority:
+                        style_priority.insert(0, extra_style)
+                elif action.startswith("use-"):
+                    pattern = action.replace("use-", "").replace("-", " ").title()
+
         return {
-            "pattern": rule.get("Recommended_Pattern", ""),
-            "style_priority": [s.strip() for s in rule.get("Style_Priority", "").split("+")],
+            "pattern": pattern,
+            "style_priority": style_priority,
             "color_mood": rule.get("Color_Mood", ""),
             "typography_mood": rule.get("Typography_Mood", ""),
             "key_effects": rule.get("Key_Effects", ""),
             "anti_patterns": rule.get("Anti_Patterns", ""),
             "decision_rules": decision_rules,
+            "applied_rules": [c for c, _ in decision_rules.items() if c.replace("if_", "").replace("_", " ") in query_lower],
             "severity": rule.get("Severity", "MEDIUM")
         }
 
@@ -194,8 +220,8 @@ class DesignSystemGenerator:
         if not project_type:
             project_type = category.lower().replace(' ', '-').replace('_', '-')
 
-        # Step 2: Get reasoning rules for this category
-        reasoning = self._apply_reasoning(category, {})
+        # Step 2: Get reasoning rules for this category (executes Decision_Rules against query)
+        reasoning = self._apply_reasoning(category, {}, query)
         style_priority = reasoning.get("style_priority", [])
 
         # Step 3: Multi-domain search with style priority hints

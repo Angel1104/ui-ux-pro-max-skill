@@ -3,22 +3,30 @@
 """
 UI/UX Pro Max Search - BM25 search engine for UI/UX style guides
 Usage: python search.py "<query>" [--domain <domain>] [--stack <stack>] [--max-results 3]
-       python search.py "<query>" --design-system [-p "Project Name"]
+       python search.py "<query>" --design-system [-p "Project Name"] [--project-type landing-page]
        python search.py "<query>" --design-system --persist [-p "Project Name"] [--page "dashboard"]
+       python search.py --list-components [--project-type dashboard]
 
-Domains: style, prompt, color, chart, landing, product, ux, typography
+Domains: style, prompt, color, chart, landing, product, ux, typography, google-fonts
 Stacks: html-tailwind, react, nextjs
 
 Persistence (Master + Overrides pattern):
   --persist    Save design system to design-system/MASTER.md
   --page       Also create a page-specific override file in design-system/pages/
+
+Component generation:
+  --project-type   Project type for context-aware components (landing-page, saas-app, dashboard, etc.)
+  --components     Comma-separated list of specific components to include
+  --list-components  List available components for a project type
 """
 
 import argparse
 import sys
 import io
 from core import CSV_CONFIG, AVAILABLE_STACKS, MAX_RESULTS, search, search_stack
-from design_system import generate_design_system, persist_design_system
+from design_system import (generate_design_system, persist_design_system,
+                           get_components_for_project, PROJECT_TYPE_COMPONENTS,
+                           _load_components_csv)
 
 # Force UTF-8 for stdout/stderr to handle emojis on Windows (cp1252 default)
 if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
@@ -55,7 +63,7 @@ def format_output(result):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="UI Pro Max Search")
-    parser.add_argument("query", help="Search query")
+    parser.add_argument("query", nargs="?", default="", help="Search query")
     parser.add_argument("--domain", "-d", choices=list(CSV_CONFIG.keys()), help="Search domain")
     parser.add_argument("--stack", "-s", choices=AVAILABLE_STACKS, help="Stack-specific search (html-tailwind, react, nextjs)")
     parser.add_argument("--max-results", "-n", type=int, default=MAX_RESULTS, help="Max results (default: 3)")
@@ -68,32 +76,70 @@ if __name__ == "__main__":
     parser.add_argument("--persist", action="store_true", help="Save design system to design-system/MASTER.md (creates hierarchical structure)")
     parser.add_argument("--page", type=str, default=None, help="Create page-specific override file in design-system/pages/")
     parser.add_argument("--output-dir", "-o", type=str, default=None, help="Output directory for persisted files (default: current directory)")
+    # Component generation
+    parser.add_argument("--project-type", "-pt", type=str, default=None,
+                        choices=list(PROJECT_TYPE_COMPONENTS.keys()),
+                        help="Project type for context-aware component specs")
+    parser.add_argument("--components", "-c", type=str, default=None,
+                        help="Comma-separated list of specific component names to include")
+    parser.add_argument("--list-components", "-lc", action="store_true",
+                        help="List available components for a project type (or all)")
 
     args = parser.parse_args()
 
+    # List components mode
+    if args.list_components:
+        if args.project_type:
+            comp_names = get_components_for_project(args.project_type)
+            print(f"## Components for {args.project_type}")
+            print(f"**Count:** {len(comp_names)}\n")
+            for name in comp_names:
+                print(f"- {name}")
+        else:
+            all_comps = _load_components_csv()
+            print(f"## All Available Components")
+            print(f"**Count:** {len(all_comps)}\n")
+            print("| Component | Category | Project Types |")
+            print("|-----------|----------|---------------|")
+            for comp in all_comps:
+                print(f"| {comp.get('Component', '')} | {comp.get('Category', '')} | {comp.get('Project Types', '')} |")
+            print(f"\n**Project types:** {', '.join(PROJECT_TYPE_COMPONENTS.keys())}")
+        sys.exit(0)
+
+    # Require query for all non-list operations
+    if not args.query:
+        parser.error("the following arguments are required: query")
+
     # Design system takes priority
     if args.design_system:
+        # Parse component names from comma-separated string
+        component_names = None
+        if args.components:
+            component_names = [c.strip() for c in args.components.split(",") if c.strip()]
+
         result = generate_design_system(
-            args.query, 
-            args.project_name, 
+            args.query,
+            args.project_name,
             args.format,
             persist=args.persist,
             page=args.page,
-            output_dir=args.output_dir
+            output_dir=args.output_dir,
+            project_type=args.project_type,
+            component_names=component_names
         )
         print(result)
-        
+
         # Print persistence confirmation
         if args.persist:
             project_slug = args.project_name.lower().replace(' ', '-') if args.project_name else "default"
             print("\n" + "=" * 60)
-            print(f"✅ Design system persisted to design-system/{project_slug}/")
-            print(f"   📄 design-system/{project_slug}/MASTER.md (Global Source of Truth)")
+            print(f"Design system persisted to design-system/{project_slug}/")
+            print(f"   design-system/{project_slug}/MASTER.md (Global Source of Truth)")
             if args.page:
                 page_filename = args.page.lower().replace(' ', '-')
-                print(f"   📄 design-system/{project_slug}/pages/{page_filename}.md (Page Overrides)")
+                print(f"   design-system/{project_slug}/pages/{page_filename}.md (Page Overrides)")
             print("")
-            print(f"📖 Usage: When building a page, check design-system/{project_slug}/pages/[page].md first.")
+            print(f"Usage: When building a page, check design-system/{project_slug}/pages/[page].md first.")
             print(f"   If exists, its rules override MASTER.md. Otherwise, use MASTER.md.")
             print("=" * 60)
     # Stack search

@@ -2,26 +2,66 @@
 name: design-system
 description: "Generate a complete design system with tokens, components, and specs. Use /design-system to start."
 trigger: "/design-system"
-argument-hint: "[project context]"
-license: MIT
+argument-hint: "[project context or query]"
 metadata:
   author: claudekit
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # Design System
 
-Token architecture, component specifications, systematic design, slide generation.
+Generates complete design system: style recommendations → color/font/token decisions → CSS variables → component specs.
 
-## When to Use
+## Pipeline
 
+```
+/create → /design-system (you are here) → /export → /build → /review
+```
+
+---
+
+## Step 1 — Read Project Brief
+
+Check if `design-system/BRIEF.md` exists (written by `/create`):
+
+```bash
+cat design-system/BRIEF.md 2>/dev/null || echo "No brief found"
+```
+
+- **If BRIEF.md exists**: extract the `Query:` field and use it as the search query
+- **If no BRIEF.md**: ask the user: "What are you building? (e.g. 'luxury e-commerce', 'SaaS dashboard', 'fitness mobile app')"
+
+---
+
+## Step 2 — Run Design Intelligence
+
+Run the search engine with the query to get style, colors, and typography recommendations:
+
+```bash
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py "<query>" --design-system --persist -p "<ProjectName>"
+```
+
+This outputs a complete design system and saves it to `design-system/<project>/MASTER.md`.
+
+Present the results to the user and ask:
+- "Style: [X]. Does this fit your vision, or would you prefer something different?"
+- "Colors: [palette]. Adjust any of these?"
+- "Fonts: [pairing]. Want alternatives?"
+
+Apply requested adjustments before proceeding.
+
+---
+
+## Step 3 — Generate CSS Tokens
+
+Once the design decisions are confirmed, generate CSS tokens based on the MASTER.md output.
+
+When to Use this step:
 - Design token creation
-- Component state definitions
 - CSS variable systems
 - Spacing/typography scales
 - Design-to-code handoff
 - Tailwind theme configuration
-- **Slide/presentation generation**
 
 ## Token Architecture
 

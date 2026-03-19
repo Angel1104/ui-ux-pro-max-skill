@@ -91,8 +91,33 @@ References: [inspiration if provided]
 
 Ask: "Does this look right? Anything to add or change?"
 
-### Step 5: Guide to Next Step
+### Step 5: Save Brief
 
-Once confirmed, tell the user:
+Once confirmed, write the brief to `design-system/BRIEF.md` so `/design-system` can read it in the next session:
 
-> "Project brief captured! Now run `/design-system` to create your complete design system — colors, typography, components, and tokens based on this brief."
+```bash
+mkdir -p design-system
+```
+
+Then write `design-system/BRIEF.md` with this structure:
+
+```markdown
+# Project Brief
+
+**Project:** [name]
+**Type:** [landing page / SaaS / dashboard / etc.]
+**Audience:** [target audience]
+**Goal:** [primary goal]
+**Query:** [2-4 word search query for design system, e.g. "luxury e-commerce fashion"]
+**Details:** [key features and pages]
+**References:** [inspiration if any]
+**Created:** [date]
+```
+
+The `Query` field is the most important — it will be passed directly to the design system generator.
+
+### Step 6: Guide to Next Step
+
+After writing BRIEF.md, tell the user:
+
+> "Brief saved to `design-system/BRIEF.md`. Now run `/design-system` to generate your complete design system — colors, typography, components, and tokens."
