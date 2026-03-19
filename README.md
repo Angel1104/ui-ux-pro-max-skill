@@ -1,7 +1,7 @@
-# [UI UX Pro Max](https://uupm.cc)
+# UI UX Pro Max
 
 <p align="center">
-  <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases"><img src="https://img.shields.io/github/v/release/nextlevelbuilder/ui-ux-pro-max-skill?style=for-the-badge&color=blue" alt="GitHub Release"></a>
+  <a href="https://github.com/Angel1104/ui-ux-pro-max-skill/releases"><img src="https://img.shields.io/github/v/release/Angel1104/ui-ux-pro-max-skill?style=for-the-badge&color=blue" alt="GitHub Release"></a>
   <img src="https://img.shields.io/badge/reasoning_rules-161-green?style=for-the-badge" alt="161 Reasoning Rules">
   <img src="https://img.shields.io/badge/UI_styles-84-purple?style=for-the-badge" alt="84 UI Styles">
   <img src="https://img.shields.io/badge/stacks-13-orange?style=for-the-badge" alt="13 Stacks">
@@ -9,29 +9,10 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/uipro-cli"><img src="https://img.shields.io/npm/v/uipro-cli?style=flat-square&logo=npm&label=CLI" alt="npm"></a>
-  <a href="https://www.npmjs.com/package/uipro-cli"><img src="https://img.shields.io/npm/dm/uipro-cli?style=flat-square&label=downloads" alt="npm downloads"></a>
-  <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/stargazers"><img src="https://img.shields.io/github/stars/nextlevelbuilder/ui-ux-pro-max-skill?style=flat-square&logo=github" alt="GitHub stars"></a>
-  <a href="https://paypal.me/uiuxpromax"><img src="https://img.shields.io/badge/PayPal-Support%20Development-00457C?style=flat-square&logo=paypal&logoColor=white" alt="PayPal"></a>
+  <a href="https://github.com/Angel1104/ui-ux-pro-max-skill/stargazers"><img src="https://img.shields.io/github/stars/Angel1104/ui-ux-pro-max-skill?style=flat-square&logo=github" alt="GitHub stars"></a>
 </p>
 
 An AI skill that provides design intelligence for building professional UI/UX across multiple platforms and frameworks.
-
-<p align="center">
-  <a href="https://uupm.cc">
-    <img src="screenshots/website.png" alt="UI UX Pro Max" width="800">
-  </a>
-</p>
-
-<p align="center">
-  <b>If you find this useful, consider supporting the project:</b><br><br>
-  <a href="https://paypal.me/uiuxpromax"><img src="https://img.shields.io/badge/PayPal-Donate-00457C?style=for-the-badge&logo=paypal&logoColor=white" alt="PayPal Donate"></a>
-</p>
-
-<p align="center">
-  <i>Other projects</i><br>
-  <a href="https://nextlevelbuilder.io">NextLevelBuilder.io</a> | <a href="https://goclaw.sh">GoClaw.sh</a> | <a href="https://claudekit.cc">ClaudeKit.cc</a> | <a href="https://tose.sh">TOSE.sh</a>
-</p>
 
 ## The Pipeline
 
@@ -236,7 +217,7 @@ Example output:
 ### Using Claude Marketplace (Claude Code)
 
 ```
-/plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill
+/plugin marketplace add Angel1104/ui-ux-pro-max-skill
 /plugin install ui-ux-pro-max@ui-ux-pro-max-skill
 ```
 
@@ -274,8 +255,8 @@ uipro init --offline        # Use bundled assets, skip download
 Python 3.x — no external dependencies.
 
 ```bash
-python3 --version       # Check
-brew install python3    # macOS
+python3 --version         # Check
+brew install python3      # macOS
 sudo apt install python3  # Ubuntu/Debian
 winget install Python.Python.3.12  # Windows
 ```
@@ -370,7 +351,7 @@ cli/                         # npm package (uipro-cli)
 
 ```bash
 # 1. Clone
-git clone https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git
+git clone https://github.com/Angel1104/ui-ux-pro-max-skill.git
 cd ui-ux-pro-max-skill
 
 # 2. Make changes in src/ui-ux-pro-max/
@@ -396,4 +377,4 @@ gh pr create
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=nextlevelbuilder/ui-ux-pro-max-skill&type=Date)](https://star-history.com/#nextlevelbuilder/ui-ux-pro-max-skill&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Angel1104/ui-ux-pro-max-skill&type=Date)](https://star-history.com/#Angel1104/ui-ux-pro-max-skill&Date)
